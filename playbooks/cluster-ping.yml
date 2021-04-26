@@ -1,0 +1,25 @@
+---
+- hosts: loginable_all
+  tasks:
+    # - name: "dump variables hostvars"
+    #   debug: var=hostvars[inventory_hostname]
+    # show all the hosts in the inventory
+    # - name: dump all hosts
+    #   debug:
+    #     msg: "{{ item }}"
+    #   with_items:
+    #     - "{{ groups['all'] }}"
+
+    # - name: run cluster-ping
+    #   shell:
+    #     cmd: ../scripts/ping-csv.sh basil500 | ../scripts/write.sh ../data "{{ inventory_hostname }}"
+    #     chdir: "{{ playbook_dir }}"
+    - name: run cluster-ping to all hosts
+      shell:
+        cmd: |
+          echo -n "{{ inventory_hostname }}" | ../scripts/write.sh ../data "{{ inventory_hostname }}"
+          echo -n "," | ../scripts/write.sh ../data "{{ inventory_hostname }}"
+          ../scripts/ping-csv.sh "{{ item }}" | ../scripts/write.sh ../data "{{ inventory_hostname }}"
+        chdir: "{{ playbook_dir }}"
+      with_items:
+        - "{{ groups.all }}"
